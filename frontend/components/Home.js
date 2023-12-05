@@ -7,7 +7,7 @@ function Home() {
 
   const handleImageClick = () => {
     // Navigate to "/order" when the image is clicked
-    navigate('/Order');
+    navigate('/order');
   };
 
   return (
