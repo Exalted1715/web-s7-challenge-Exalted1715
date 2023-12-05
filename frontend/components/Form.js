@@ -36,8 +36,8 @@ export default function Form() {
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [formValues, setFormValues] = useState({
     fullName: '',
-    size: '',
-    accept: false,
+    size: ''
+   
   });
   const [submitStatus, setSubmitStatus] = useState(null);
 
