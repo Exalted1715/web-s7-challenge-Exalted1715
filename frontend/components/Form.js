@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios';
 import * as yup from "yup"
 
 // 👇 Here are the validation errors you will use with Yup.
@@ -19,7 +20,7 @@ size: yup
 .string()
 .oneOf(['s', 'm', 'l'], validationErrors.sizeIncorrect)
 .required('Size is required'),
-accept: yup.boolean().oneOf([true], validationErrors.termsIncorrect),
+
 });
 
 
@@ -32,24 +33,29 @@ const toppings = [
   { topping_id: '5', text: 'Ham' },
 ]
 
+const getInitialValues = () => ({fullName: '', size: ''})
+const getInitialValidation = () => ({fullName: '', size: ''})
+
 export default function Form() {
   const [selectedToppings, setSelectedToppings] = useState([]);
-  const [formValues, setFormValues] = useState({
-    fullName: '',
-    size: ''
-   
-  });
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const [values, setValues] = useState(getInitialValues())
+  const [errors, setErrors] = useState(getInitialValidation())
+  const [success, setSuccess] = useState()
+  const [failure, setFailure] = useState()
+  const [submitAllowed, setSubmitAllowed] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const inputValue = type === 'checkbox' ? checked : value;
+  useEffect(() => {
+    formSchema.isValid(values).then(setSubmitAllowed)
+  }, [values])
 
-    setFormValues({
-      ...formValues,
-      [name]: inputValue,
-    });
-  };
+  const onChange = evt => {
+    let { type, name, value, checked } = evt.target
+    value = (type == 'checkbox' ? checked : value)
+    setValues({ ...values, [name]: value })
+    yup.reach(formSchema, name).validate(value)
+      .then(() => setErrors(e => ({ ...e, [name]: '' })))
+      .catch(err => setErrors(e => ({ ...e, [name]: err.errors[0] })))
+  }
 
   const handleCheckboxChange = (topping_id) => {
     setSelectedToppings((prevSelectedToppings) => {
@@ -61,32 +67,32 @@ export default function Form() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      // Validate form using Yup schema
-      await formSchema.validate(formValues, { abortEarly: false });
-      // If validation passes, handle the submission logic here
-      console.log('Form submitted!');
-      setSubmitStatus('success');
-    } catch (error) {
-      // Handle validation errors
-      const errors = {};
-      error.inner.forEach((e) => {
-        errors[e.path] = e.message;
-      });
-      console.log('Validation errors:', errors);
-      setSubmitStatus('failure');
-    }
+  const onSubmit = evt => {
+    evt.preventDefault()
+    setSubmitAllowed(false)
+    axios.post('http://localhost:9009/api/register', values)
+      .then(res => {
+        console.log(res.data)
+        setValues(getInitialValues())
+        setSuccess(res.data.message)
+        setFailure()
+      })
+      .catch(err => {
+        console.log(err.message)
+        console.log(err?.response?.data?.message)
+        setFailure(err?.response?.data?.message)
+        setSuccess()
+      })
+      .finally(() => {
+        setSubmitAllowed(true)
+      })
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
       <h2>Order Your Pizza</h2>
-      {submitStatus === 'success' && <div className='success'>Thank you for your order!</div>}
-      {submitStatus === 'failure' && <div className='failure'>Something went wrong</div>}
-
+      {true && <div className='success'>Thank you for your order!</div>}
+      {true && <div className='failure'>Something went wrong</div>}
       <div className="input-group">
         <div>
           <label htmlFor="fullName">Full Name</label><br />
@@ -94,13 +100,13 @@ export default function Form() {
             placeholder="Type full name"
             id="fullName"
             type="text"
-            value={formValues.fullName}
-            onChange={handleChange}
+            value={getInitialValues.fullName}
+            onChange={onChange}
             name="fullName"
           />
         </div>
         {/* Display error message if validation error for full name */}
-        {submitStatus === 'failure' && formValues.fullName === '' && (
+        {submitAllowed === 'failure' && getInitialValues.fullName === '' && (
           <div className='error'>{validationErrors.fullNameTooShort}</div>
         )}
       </div>
@@ -110,8 +116,8 @@ export default function Form() {
           <label htmlFor="size">Size</label><br />
           <select
             id="size"
-            value={formValues.size}
-            onChange={handleChange}
+            value={getInitialValues.size}
+            onChange={onChange}
             name="size"
           >
             <option value="">----Choose Size----</option>
@@ -121,9 +127,7 @@ export default function Form() {
           </select>
         </div>
         {/* Display error message if validation error for size */}
-        {submitStatus === 'failure' && formValues.size === '' && (
-          <div className='error'>{validationErrors.sizeIncorrect}</div>
-        )}
+        {validationErrors.sizeIncorrect && <div className="failure">{validationErrors.sizeIncorrect}</div>}
       </div>
 
       <div className="input-group">
@@ -140,13 +144,13 @@ export default function Form() {
           </label>
         ))}
         {/* Display error message if validation error for toppings */}
-        {submitStatus === 'failure' && selectedToppings.length === 0 && (
+        {submitAllowed === 'failure' && selectedToppings.length === 0 && (
           <div className='error'>{validationErrors.termsIncorrect}</div>
         )}
       </div>
 
       {/* Disable the submit button until the form validates */}
-      <input type="submit" disabled={!formValues.accept || selectedToppings.length === 0} />
+      <input type="submit" disabled={!getInitialValues.accept || selectedToppings.length === 0} />
     </form>
   );
 }
