@@ -19,6 +19,19 @@ const toppings = [
 ]
 
 export default function Form() {
+  const [selectedToppings, setSelectedToppings] = useState([]);
+
+  const handleCheckboxChange = (topping_id) => {
+    // Toggle the topping in the selectedToppings array
+    setSelectedToppings((prevSelectedToppings) => {
+      if (prevSelectedToppings.includes(topping_id)) {
+        return prevSelectedToppings.filter((topping) => topping !== topping_id);
+      } else {
+        return [...prevSelectedToppings, topping_id];
+      }
+    });
+  };
+
   return (
     <form>
       <h2>Order Your Pizza</h2>
@@ -38,21 +51,28 @@ export default function Form() {
           <label htmlFor="size">Size</label><br />
           <select id="size">
             <option value="">----Choose Size----</option>
-            {/* Fill out the missing options */}
+            <option value="s">small</option>
+            <option value="m">medium</option>
+            <option value="l">large</option>
           </select>
         </div>
         {true && <div className='error'>Bad value</div>}
       </div>
 
       <div className="input-group">
-        {/* 👇 Maybe you could generate the checkboxes dynamically */}
-        <label key="1">
-          <input
-            name="Pepperoni"
-            type="checkbox"
-          />
-          Pepperoni<br />
-        </label>
+        {/* Generate checkboxes dynamically using map */}
+        {toppings.map((topping) => (
+          <label key={topping.topping_id}>
+            <input
+              name={topping.text}
+              type="checkbox"
+              checked={selectedToppings.includes(topping.topping_id)}
+              onChange={() => handleCheckboxChange(topping.topping_id)}
+            />
+            {topping.text}
+            <br />
+          </label>
+        ))}
       </div>
       {/* 👇 Make sure the submit stays disabled until the form validates! */}
       <input type="submit" />
