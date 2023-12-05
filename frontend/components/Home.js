@@ -5,10 +5,7 @@ import pizza from './images/pizza.jpg';
 function Home() {
   const navigate = useNavigate();
 
-  const handleImageClick = () => {
-    // Navigate to "/order" when the image is clicked
-    navigate('/order');
-  };
+  
 
   return (
     <div>
@@ -18,7 +15,7 @@ function Home() {
         alt="order-pizza"
         style={{ cursor: 'pointer' }}
         src={pizza}
-        onClick={handleImageClick}
+        onClick={() => navigate("/order")}
       />
     </div>
   );
