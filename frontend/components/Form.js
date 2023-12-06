@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as yup from 'yup';
 
+
 const validationErrors = {
   fullNameTooShort: 'full name must be at least 3 characters',
   fullNameTooLong: 'full name must be at most 20 characters',
@@ -11,7 +12,7 @@ const validationErrors = {
 
 const formSchema = yup.object().shape({
   fullName: yup.string().min(3, validationErrors.fullNameTooShort).max(20, validationErrors.fullNameTooLong).required('Full name is required'),
-  size: yup.string().oneOf(['s', 'm', 'l'], validationErrors.sizeIncorrect).required('Size is required'),
+  size: yup.string().oneOf(['S', 'M', 'L'], validationErrors.sizeIncorrect).required('Size is required'),
 });
 
 const toppings = [
@@ -106,9 +107,9 @@ export default function Form() {
           <br />
           <select id="size" value={values.size} onChange={onChange} name="size">
             <option value="">----Choose Size----</option>
-            <option value="s">small</option>
-            <option value="m">medium</option>
-            <option value="l">large</option>
+            <option value="S">small</option>
+            <option value="M">medium</option>
+            <option value="L">large</option>
           </select>
         </div>
         {errors.size && <div className="error">{errors.size}</div>}
