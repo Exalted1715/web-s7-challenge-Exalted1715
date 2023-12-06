@@ -12,7 +12,7 @@ const validationErrors = {
 };
 
 const formSchema = yup.object().shape({
-  fullName: yup.string('full name is required').min(3, validationErrors.fullNameTooShort).max(20, validationErrors.fullNameTooLong).required('full name is required'),
+  fullName: yup.string().min(3, validationErrors.fullNameTooShort).max(20, validationErrors.fullNameTooLong).required('Full name is required'),
   size: yup.string().oneOf(['S', 'M', 'L'], validationErrors.sizeIncorrect).required('Size is required'),
 });
 
@@ -49,7 +49,7 @@ export default function Form() {
         await yup.reach(formSchema, name).validate(newValue);
         setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
       } catch (err) {
-        setErrors((prevErrors) => ({ ...prevErrors, [name]: err.errors[0] }));
+        setErrors((prevErrors) => ({ ...prevErrors, [name]: err.message }));
       }
     })();
   };
