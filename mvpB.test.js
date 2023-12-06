@@ -72,12 +72,12 @@ describe('Sprint 7 Challenge Learner Tests', () => {
     test('[5] renders a text that reads "JavaScript is pretty awesome"', () => {
       render(<HelloWorld />);
       expect(screen.queryByText('JavaScript is pretty awesome')).toBeInTheDocument();
-    });
+    })
   
     test('[6] renders a text that includes "javaScript is pretty" (use exact = false)', () => {
       render(<HelloWorld />);
       expect(screen.queryByText(/javaScript is pretty/i)).toBeInTheDocument();
-    });
+    })
   
 
   test('you can comment out this test', () => {
