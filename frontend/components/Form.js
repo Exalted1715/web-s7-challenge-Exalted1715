@@ -4,8 +4,8 @@ import * as yup from 'yup';
 
 
 const validationErrors = {
-  fullNameTooShort: 'fullName must be at least 3 characters',
-  fullNameTooLong: 'fullName cannot exceed 20 characters',
+  fullNameTooShort: 'full name must be at least 3 characters',
+  fullNameTooLong: 'full name cannot exceed 20 characters',
   sizeIncorrect: 'size must be S or M or L',
   termsIncorrect: 'at least one topping must be selected',
   
