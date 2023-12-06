@@ -4,15 +4,15 @@ import * as yup from 'yup';
 
 
 const validationErrors = {
-  fullNameTooShort: 'full name must be at least 3 characters',
-  fullNameTooLong: 'full name must be at most 20 characters',
+  fullNameTooShort: 'fullName must be at least 3 characters',
+  fullNameTooLong: 'fullName cannot exceed 20 characters',
   sizeIncorrect: 'size must be S or M or L',
   termsIncorrect: 'at least one topping must be selected',
   
 };
 
 const formSchema = yup.object().shape({
-  fullName: yup.string().min(3, validationErrors.fullNameTooShort).max(20, validationErrors.fullNameTooLong),
+  fullName: yup.string().min(3, validationErrors.fullNameTooShort).max(20, validationErrors.fullNameTooLong).required('fullName is required'),
   size: yup.string().oneOf(['S', 'M', 'L'], validationErrors.sizeIncorrect).required('Size is required'),
 });
 
