@@ -12,7 +12,7 @@ const validationErrors = {
 };
 
 const formSchema = yup.object().shape({
-  fullName: yup.string().min(3, validationErrors.fullNameTooShort).max(20, validationErrors.fullNameTooLong).required('fullName is required'),
+  fullName: yup.string().min(3, validationErrors.fullNameTooShort).max(20, validationErrors.fullNameTooLong),
   size: yup.string().oneOf(['S', 'M', 'L'], validationErrors.sizeIncorrect).required('Size is required'),
 });
 
