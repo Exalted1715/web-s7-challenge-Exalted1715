@@ -62,7 +62,7 @@ export default function Form() {
     axios
       .post('http://localhost:9009/api/order',{
       fullName: values.fullName,
-      size: values.size.toLocaleUpperCase(),
+      size: values.size.toUpperCase(),
       toppings: selectedToppings,
       })
       .then((res) => {
