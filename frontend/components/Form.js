@@ -117,7 +117,7 @@ export default function Form() {
         {errors.terms && <div className="error">{errors.terms}</div>}
       </div>
 
-      <input type="submit" disabled={!submitAllowed || selectedToppings.length === 0} />
+      <input type="submit" disabled={!submitAllowed && selectedToppings.length === 0} />
     </form>
   );
 }
