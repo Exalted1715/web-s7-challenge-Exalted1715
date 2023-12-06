@@ -69,6 +69,7 @@ export default function Form() {
         console.log(res.data);
         setValues(getInitialValues());
         setSuccess(res.data.message);
+        setSelectedToppings([])
         setFailure('');
       })
       .catch((err) => {
