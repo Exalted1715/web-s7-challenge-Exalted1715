@@ -60,7 +60,11 @@ export default function Form() {
     evt.preventDefault();
     setSubmitAllowed(false);
     axios
-      .post('http://localhost:9009/api/register', values)
+      .post('http://localhost:9009/api/order',{
+      fullName: values.fullName,
+      size: values.size.toLocaleUpperCase(),
+      toppings: selectedToppings,
+      })
       .then((res) => {
         console.log(res.data);
         setValues(getInitialValues());
