@@ -41,11 +41,15 @@ export default function Form() {
     const { type, name, value, checked } = evt.target;
     const newValue = type === 'checkbox' ? checked : value;
     setValues((prevValues) => ({ ...prevValues, [name]: newValue }));
-    yup
-      .reach(formSchema, name)
-      .validate(newValue)
-      .then(() => setErrors((prevErrors) => ({ ...prevErrors, [name]: '' })))
-      .catch((err) => setErrors((prevErrors) => ({ ...prevErrors, [name]: err.errors[0] })));
+
+    (async () => {
+      try {
+        await yup.reach(formSchema, name).validate(newValue);
+        setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
+      } catch (err) {
+        setErrors((prevErrors) => ({ ...prevErrors, [name]: err.errors[0] }));
+      }
+    })();
   };
 
   const handleCheckboxChange = (topping_id) => {
@@ -56,31 +60,30 @@ export default function Form() {
     );
   };
 
-  const onSubmit = (evt) => {
+  const onSubmit = async (evt) => {
     evt.preventDefault();
     setSubmitAllowed(false);
-    axios
-      .post('http://localhost:9009/api/order',{
-      fullName: values.fullName,
-      size: values.size.toUpperCase(),
-      toppings: selectedToppings,
-      })
-      .then((res) => {
-        console.log(res.data);
-        setValues(getInitialValues());
-        setSuccess(res.data.message);
-        setSelectedToppings([])
-        setFailure('');
-      })
-      .catch((err) => {
-        console.log(err.message);
-        console.log(err?.response?.data?.message);
-        setFailure(err?.response?.data?.message || 'Something went wrong');
-        setSuccess('');
-      })
-      .finally(() => {
-        setSubmitAllowed(true);
+
+    try {
+      const response = await axios.post('http://localhost:9009/api/order', {
+        fullName: values.fullName,
+        size: values.size.toUpperCase(),
+        toppings: selectedToppings,
       });
+
+      console.log(response.data);
+      setValues(getInitialValues());
+      setSuccess(response.data.message);
+      setSelectedToppings([]);
+      setFailure('');
+    } catch (err) {
+      console.error(err.message);
+      console.error(err?.response?.data?.message);
+      setFailure(err?.response?.data?.message || 'Something went wrong');
+      setSuccess('');
+    } finally {
+      setSubmitAllowed(true);
+    }
   };
 
   return (
